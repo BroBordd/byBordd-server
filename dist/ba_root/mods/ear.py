@@ -19,12 +19,13 @@ def ear(m,i):
     p = i2p(i)
     if m.startswith('.'):
         return
-    Bubble(
-        node=p.actor.node,
-        text=m,
-        time=max(3,min(6,len(m)/60)),
-        color=p.actor.node.color
-    )
+    with ga().context:
+        Bubble(
+            node=p.actor.node,
+            text=m,
+            time=max(3,min(6,len(m)/60)),
+            color=p.actor.node.color
+        )
     return m
 
 def i2p(i):
