@@ -8,8 +8,8 @@ For byBordd-server
 """
 
 from babase import Plugin
-from bascenev1 import (
-    screenmessage as push,
+from _bascenev1 import (
+    broadcastmessage as push,
     chatmessage as say
 )
 
