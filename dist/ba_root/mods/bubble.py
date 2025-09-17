@@ -64,7 +64,7 @@ class Bubble:
         text = f" {text}"
         s.ans,s.kids,s.mats,s.time = [],[],[],time
         s.node,s.dead,s.text = node,False,text
-        s.color,s.mode,s.res = color,mode,res
+        s.color,s.mode,s.res,s.wid = color,mode,res,wid
         # nuke existing bubbles if possible
         s.mem = lambda: s.__class__.__mem__
         m = s.mem()
@@ -86,7 +86,7 @@ class Bubble:
         q.append(m)
         # the bubble
         c = list(s.color)
-        w = wid
+        w = s.wid
         b = bs.newnode(
             'text',
             owner=m,
