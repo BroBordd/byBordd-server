@@ -86,7 +86,7 @@ class Bubble:
         q.append(m)
         # the bubble
         c = list(s.color)
-        w = wid[0]
+        w = wid
         b = bs.newnode(
             'text',
             owner=m,
