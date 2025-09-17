@@ -516,7 +516,7 @@ class Button:
         adjusts the label's scale to fit within the button, then creates
         'text' nodes for each.
         """
-        t,h = FIT(s.res,s.size)
+        t,h = FIT(s.wres,s.size)
         [_.delete() for _ in s.lines if hasattr(_,'delete')]
         pn = s.parent.node
         s.lines = [
@@ -692,7 +692,7 @@ class Text:
         bs.animate(s.line,'opacity',{0:p1,t:p2})
 
 GSW = lambda s: gsw(s,suppress_warning=True)
-FIT = lambda r,s: (r*(round(s[0]/GSW(r)))+'\n',round(s[1]/32))
+FIT = lambda r,s: (r*(round(s[0]/r))+'\n',round(s[1]/32))
 MAT = lambda o,x,y: (
     bs.newnode(
         'math',
