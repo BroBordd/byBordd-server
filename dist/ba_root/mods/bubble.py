@@ -13,7 +13,7 @@ from babase import (
     get_string_width as ssw,
     Plugin
 )
-from bascenev1 import (
+from _bascenev1 import (
     timer as tick,
     animate_array,
     animate,
