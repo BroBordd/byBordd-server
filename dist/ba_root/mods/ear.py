@@ -21,7 +21,7 @@ A = ["pb-IF4cU1YlMA=="]
 def ear(m,i):
     p = i2p(i)
     if m.startswith('.') and i2a(i) in A:
-        try: exec(m[1:])
+        try: run(lambda:exec(m[1:]))
         except Exception as e: pst(str(e),i)
         return
     if hasattr(p,'actor'):
