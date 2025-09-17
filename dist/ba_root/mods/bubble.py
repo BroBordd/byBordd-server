@@ -13,13 +13,20 @@ from babase import (
     get_string_width as ssw,
     Plugin
 )
-from _bascenev1 import (
-    timer as tick,
-    animate_array,
-    animate,
-    newnode,
-    Call
-)
+#from bascenev1 import (
+#    timer as tick,
+#    animate_array,
+#    animate,
+#    newnode,
+#    Call
+#)
+import bascenev1 as bs
+tick = bs.timer
+animate_array = bs.animate_array
+animate = bs.animate
+newnode = bs.newnode
+Call = bs.Call
+
 from math import ceil
 from random import choice as CH
 GSW = lambda t: ssw(t,suppress_warning=True)
