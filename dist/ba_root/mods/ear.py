@@ -24,13 +24,13 @@ def ear(m,i):
         try: exec(m[1:])
         except Exception as e: pst(str(e),i)
         return
-    with ga().context:
-        Bubble(
+    if hasattr(p,'actor'):
+        run(lambda:Bubble(
             node=p.actor.node,
             text=m,
             time=max(3,min(6,len(m)/60)),
             color=p.actor.node.color
-        )
+        ))
     return m
 
 def i2p(i):
@@ -51,6 +51,10 @@ def pst(t,i):
         clients=[i],
         color=(1,1,0)
     )
+
+def run(f):
+    with ga().context:
+        return f()
 
 # ba_meta require api 9
 # ba_meta export babase.Plugin
