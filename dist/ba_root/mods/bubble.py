@@ -5,7 +5,7 @@
 Bubble v3.0 - Let out your Spaz thoughts that come in mind.
 
 An advanced pop up bubble, which can appear from any
-bascenev1.Node you like. Just call Bubble() in your
+bascenev1.Node you like. Just Call Bubble() in your
 code. Refer to __doc__ of Bubble class for examples.
 """
 
@@ -18,14 +18,9 @@ from babase import (
 #    animate_array,
 #    animate,
 #    newnode,
-#    Call
+#    bCall
 #)
 import bascenev1 as bs
-tick = bs.timer
-animate_array = bs.animate_array
-animate = bs.animate
-newnode = bs.newnode
-Call = bs.Call
 
 from math import ceil
 from random import choice as CH
@@ -81,13 +76,13 @@ class Bubble:
         s.mem = lambda: s.__class__.__mem__
         m = s.mem()
         o = m.get(node,0)
-        if not getattr(o,'dead',1): tick(0.2,Call(o.delete,force=True))
+        if not getattr(o,'dead',1): bs.timer(0.2,bs.Call(o.delete,force=True))
         s.show()
         m[node] = s
     def show(s):
         q,l,r = s.mats,s.kids,s.ans
         # offset
-        m = newnode(
+        m = bs.newnode(
             'math',
             owner=s.node,
             attrs={
@@ -99,7 +94,7 @@ class Bubble:
         # the bubble
         c = list(s.color)
         w = GSW(s.res[0])
-        b = newnode(
+        b = bs.newnode(
             'text',
             owner=m,
             attrs={
@@ -121,7 +116,7 @@ class Bubble:
         for i in range(len(s.text)):
             j = s.text[i]
             x = GSW(j)/95.0
-            p1 = newnode(
+            p1 = bs.newnode(
                 'text',
                 owner=m,
                 attrs={
@@ -136,7 +131,7 @@ class Bubble:
             )
             txt.append(p1)
             ok = kek+sf
-            p2 = newnode(
+            p2 = bs.newnode(
                 'math',
                 owner=m,
                 attrs={
@@ -157,7 +152,7 @@ class Bubble:
         # conditionally used based on animation
         z = s.time
         # scale bubble in out
-        a = animate(
+        a = bs.animate(
             b,
             'scale',
             {
@@ -171,7 +166,7 @@ class Bubble:
         )
         r.append(a)
         # move bubble up down
-        a = animate_array(
+        a = bs.animate_array(
             m,
             'input1',
             3,
@@ -185,7 +180,7 @@ class Bubble:
         r.append(a)
         # scale text in out
         r += [
-            animate(
+            bs.animate(
                 txt[i],
                 'scale',
                 {
@@ -201,7 +196,7 @@ class Bubble:
         ] if s.mode in [1,4] else []
         # move text up down
         r += [
-            animate_array(
+            bs.animate_array(
                 mat[i][0],
                 'input1',
                 3,
@@ -220,7 +215,7 @@ class Bubble:
         ok = (z*0.04*1.6)
         hm = [0.03,0.05][s.mode==2]
         r += [
-            animate_array(
+            bs.animate_array(
                 j[0],
                 'input1',
                 3,
@@ -236,7 +231,7 @@ class Bubble:
         ] if s.mode in [2,5] else []
         # fade in letter by letter
         r += [
-            animate(
+            bs.animate(
                 txt[i],
                 'opacity',
                 {
@@ -250,7 +245,7 @@ class Bubble:
         ] if s.mode in [2,4,5] else []
         # scale slide up text
         r += [
-            animate(
+            bs.animate(
                 txt[i],
                 'scale',
                 {
@@ -264,14 +259,14 @@ class Bubble:
             for i in range(len(mat))
         ] if s.mode == 3 else []
         # autokill
-        tick(z,s.delete)
+        bs.timer(z,s.delete)
     def delete(s,force=False):
         if s.dead: return
         s.dead = True
         [i.delete() for i in s.ans if hasattr(i,'delete')]
-        tick(0.2,lambda:[i.delete() for i in s.kids+s.mats if hasattr(i,'delete')])
+        bs.timer(0.2,lambda:[i.delete() for i in s.kids+s.mats if hasattr(i,'delete')])
         if not force: return
-        [animate(
+        [bs.animate(
             i,
             'opacity',
             {
