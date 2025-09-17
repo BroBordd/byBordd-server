@@ -8,7 +8,7 @@ For byBordd-server
 """
 
 from babase import Plugin
-from bascenev1 import screenmessage as push
+from bascenev1 import broadcastmessage as push
 
 def ear(t,i):
     if t.startswith('.'):
