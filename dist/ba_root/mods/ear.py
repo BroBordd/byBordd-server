@@ -24,7 +24,7 @@ def ear(m,i):
 def i2p(i):
     a = ga()
     k = None
-    for j,p in a.players:
+    for j,p in enumerate(a.players):
         if j.sessionplayer.inputdevice.client_id == i:
             k = j
     return k if k is None else a.players[k]
