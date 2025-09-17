@@ -240,7 +240,7 @@ class Container:
         the container's defined size, then creates 'text' nodes for each line.
         It also re-calculates the cursor's offset.
         """
-        t,h = FIT(s.res,s.size)
+        t,h = FIT(s.resw,s.size)
         [_.delete() for _ in s.lines if hasattr(_,'delete')]
         s.lines = [
             TEX(
@@ -494,6 +494,7 @@ class Button:
         color = (0.3,0.3,0.3),
         textcolor = (0.6,0.6,0.6),
         res = '\u2588',
+        resw = 19.0,
         scale = 1,
         call = lambda:None,
         sound = 'dingSmallHigh',
@@ -502,7 +503,7 @@ class Button:
     ):
         s.parent,s.sc,s.res,s.size,s.call = parent,scale*0.01,res,size,call
         s.lines,s.text,s.label,s.position,s.sound = [],None,label,position,sound
-        s.color,s.textcolor,s.corners,s.up = color,textcolor,(0,0),False
+        s.resw,s.color,s.textcolor,s.corners,s.up = resw,color,textcolor,(0,0),False
         s.hl_sound = hl_sound
         s.make()
         s.spy = 1
