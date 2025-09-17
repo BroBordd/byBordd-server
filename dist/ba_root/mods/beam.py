@@ -18,19 +18,7 @@ from bauiv1 import (
     charstr as cs,
     SpecialChar as sc
 )
-from bascenev1 import (
-    newnode,
-    Call,
-    animate,
-    timer as tick,
-    Timer as tock,
-    getmesh,
-    gettexture,
-    getcollision as COL,
-    HitMessage,
-    getnodes,
-    getsound
-)
+import bascenev1 as bs
 from math import dist
 from uuid import uuid4
 from random import uniform as UF
@@ -76,15 +64,15 @@ class Beam:
         id = None
     ):
         so = SO.get()
-        s.node = newnode(
+        s.node = bs.newnode(
             'prop',
             delegate=s,
             attrs={
                 'position':position,
                 'body':'box',
-                'mesh':getmesh('tnt'),
+                'mesh':bs.getmesh('tnt'),
                 'materials':[so.object_material,so.pickup_material],
-                'color_texture':gettexture('rgbStripes'),
+                'color_texture':bs.gettexture('rgbStripes'),
                 'shadow_size':0.5,
                 'mesh_scale':0.7,
                 'body_scale':0.6
@@ -138,14 +126,14 @@ class Beam:
         """
         Handles incoming messages to the Beam's physical node.
 
-        Specifically, it responds to HitMessage by activating the UI
+        Specifically, it responds to bs.HitMessage by activating the UI
         and capturing player input.
 
         Args:
             m (babase.Message): The message received by the node.
         """
-        if isinstance(m,HitMessage):
-            n = COL().sourcenode
+        if isinstance(m,bs.HitMessage):
+            n = bs.getcollision().sourcenode
             if n.getnodetype() != 'spaz': return
             if not s.active:
                 s.container.opacity = 0
@@ -153,7 +141,7 @@ class Beam:
                 s.up = False
                 s.next.opacity = 1
             s.tip.opacity = 1
-            s.bye = tock(1.5,Call(setattr,s.tip,'opacity',0))
+            s.bye = bs.Timer(1.5,bs.Call(setattr,s.tip,'opacity',0))
             s.next.capture(n)
 
     def eye(s):
@@ -164,9 +152,9 @@ class Beam:
         (players). If a player comes within a certain range, the introductory
         UI for the Beam becomes visible.
         """
-        tick(0.1,s.eye)
+        bs.timer(0.1,s.eye)
         if s.active: return
-        for n in [_ for _ in getnodes() if _.getnodetype() == 'spaz']:
+        for n in [_ for _ in bs.getnodes() if _.getnodetype() == 'spaz']:
             d = dist(n.position,s.node.position)
             if d>2 and s.up:
                 s.up = False
@@ -332,10 +320,10 @@ class Container:
         s.me.actor.node.move_left_right = 0
         s.me.resetinput()
         for i,_ in enumerate(['UP_DOWN','LEFT_RIGHT']):
-            s.me.assigninput(getattr(IT,_),Call(s.manage,i))
+            s.me.assigninput(getattr(IT,_),bs.Call(s.manage,i))
         s.me.assigninput(IT.BOMB_PRESS,s.dump)
         s.me.assigninput(IT.PUNCH_PRESS,s.push)
-        animate(s.cursor,'opacity',{0:0,0.3:1})
+        bs.animate(s.cursor,'opacity',{0:0,0.3:1})
 
     def manage(s,i,v):
         """
@@ -356,7 +344,7 @@ class Container:
         This method runs on a timer and moves the cursor within the container's
         bounds according to the player's directional input.
         """
-        tick(0.01, s.hover)
+        bs.timer(0.01, s.hover)
         if s.ho == [0,0] and s.position == s.node.position: return
         x, y = s.ho
         sc6 = s.sc * 6
@@ -387,7 +375,7 @@ class Container:
         over any `Button` objects within the container, highlighting them
         accordingly.
         """
-        tick(0.01,s.watch)
+        bs.timer(0.01,s.watch)
         if not s.me: return
         x,y,z = s.cpos()
         o = None
@@ -409,7 +397,7 @@ class Container:
         """
         s.me.resetinput()
         s.me.actor.connect_controls_to_player()
-        animate(s.cursor,'opacity',{0:1,0.3:0})
+        bs.animate(s.cursor,'opacity',{0:1,0.3:0})
         getattr(s.on[0],'hl',lambda b:0)(False)
         s.on[0] = s.me = None
         s.ho = [0,0]
@@ -435,7 +423,7 @@ class Container:
         f = getattr(s.on[0],'call',0)
         if not callable(f): return
         z = getattr(s.on[0],'sound',0)
-        f(); getsound(z).play(position=s.cpos()) if z else 0
+        f(); bs.getsound(z).play(position=s.cpos()) if z else 0
 
     def delete(s):
         """
@@ -444,7 +432,7 @@ class Container:
         Fades out the container and schedules its actual deletion after a delay.
         """
         s.anim(1,0)
-        tick(1,s._delete)
+        bs.timer(1,s._delete)
 
     def _delete(s):
         """
@@ -461,7 +449,7 @@ class Container:
             p2 (float): The ending opacity.
             t (float): The duration of the animation in seconds.
         """
-        [animate(_,'opacity',{0:p1,t:p2}) for _ in s.lines]
+        [bs.animate(_,'opacity',{0:p1,t:p2}) for _ in s.lines]
         for _ in s.kids+s.rest:
             _.anim(p1,p2,t=t)
 
@@ -597,7 +585,7 @@ class Button:
             b (bool): If True, highlight the button; if False, unhighlight it.
         """
         s.up = b
-        getsound(s.hl_sound).play(position=s.text.position) if b else 0
+        bs.getsound(s.hl_sound).play(position=s.text.position) if b else 0
         i = 0.4
         for _ in ['color','textcolor']:
             c = getattr(s,_)
@@ -614,7 +602,7 @@ class Button:
             p2 (float): The ending opacity.
             t (float): The duration of the animation in seconds.
         """
-        [animate(_,'opacity',{0:p1,t:p2}) for _ in [*s.lines,s.text]]
+        [bs.animate(_,'opacity',{0:p1,t:p2}) for _ in [*s.lines,s.text]]
 
 
 class Text:
@@ -701,12 +689,12 @@ class Text:
             p2 (float): The ending opacity.
             t (float): The duration of the animation in seconds.
         """
-        animate(s.line,'opacity',{0:p1,t:p2})
+        bs.animate(s.line,'opacity',{0:p1,t:p2})
 
 GSW = lambda s: gsw(s,suppress_warning=True)
 FIT = lambda r,s: (r*(round(s[0]/GSW(r)))+'\n',round(s[1]/32))
 MAT = lambda o,x,y: (
-    newnode(
+    bs.newnode(
         'math',
         owner=o,
         attrs={
@@ -716,7 +704,7 @@ MAT = lambda o,x,y: (
     )
 )
 TEX = lambda o,**k: (
-    newnode(
+    bs.newnode(
         'text',
         attrs={
             'in_world':True,
