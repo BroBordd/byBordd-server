@@ -7,7 +7,6 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 import babase
 import _bascenev1
-from ear import ear
 
 if TYPE_CHECKING:
     from typing import Any
@@ -39,7 +38,8 @@ def filter_chat_message(msg: str, client_id: int) -> str | None:
     Should filter and return the string to be displayed, or return None
     to ignore the message.
     """
-    return ear(msg,client_id)
+    print(f"lmao {msg} {client_id}")
+    return msg
 
 
 def local_chat_message(msg: str) -> None:
