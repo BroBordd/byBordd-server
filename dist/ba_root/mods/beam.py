@@ -516,7 +516,7 @@ class Button:
         adjusts the label's scale to fit within the button, then creates
         'text' nodes for each.
         """
-        t,h = FIT(s.wres,s.size)
+        t,h = FIT(s.resw,s.size)
         [_.delete() for _ in s.lines if hasattr(_,'delete')]
         pn = s.parent.node
         s.lines = [
