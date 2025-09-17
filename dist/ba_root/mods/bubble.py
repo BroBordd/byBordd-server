@@ -9,19 +9,11 @@ bascenev1.Node you like. Just Call Bubble() in your
 code. Refer to __doc__ of Bubble class for examples.
 """
 
+import bascenev1 as bs
 from babase import (
     get_string_width as ssw,
     Plugin
 )
-#from bascenev1 import (
-#    timer as tick,
-#    animate_array,
-#    animate,
-#    newnode,
-#    bCall
-#)
-import bascenev1 as bs
-
 from math import ceil
 from random import choice as CH
 GSW = lambda t: ssw(t,suppress_warning=True)
@@ -64,7 +56,7 @@ class Bubble:
         color: tuple = (1,1,1),
         time: float | int = 6,
         mode: int = 0,
-        res: list = [('█'),('▼')]
+        res: list = [('#'),('\\/')]
     ) -> None:
         if not 0 <= mode <= 5 : raise ValueError(f'mode can be an integer from 0 to 5, not {mode}')
         if not mode: mode = CH([1,2,3,4,5])
