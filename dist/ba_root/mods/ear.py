@@ -20,10 +20,10 @@ def ear(m,i):
     if m.startswith('.'):
         return
     Bubble(
-        node=p.node,
+        node=p.actor.node,
         text=m,
         time=max(3,min(6,len(m)/60)),
-        color=p.node.color
+        color=p.actor.node.color
     )
     return m
 
