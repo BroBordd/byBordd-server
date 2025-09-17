@@ -13,12 +13,18 @@ from _bascenev1 import (
     broadcastmessage as push,
     chatmessage as say
 )
+from bubble import Bubble
 
 def ear(m,i):
+    p = i2p(i)
     if m.startswith('.'):
-        p = i2p(i)
-        push(f'{p}',clients=[i],transient=True)
         return
+    Bubble(
+        node=p.node,
+        text=m,
+        time=max(3,min(6,len(m)/60)),
+        color=p.node.color
+    )
     return m
 
 def i2p(i):
