@@ -230,13 +230,14 @@ class Container:
         cursor_color = (0,1,1),
         cursor_res = cs(sc.DPAD_CENTER_BUTTON),
         res = '\u2588',
+        resw = 19.0,
         scale = 1,
         opacity = 1
     ):
         s.position = p = position
         s.node = TEX(None,text='')
         s.sc,s.me,s.cursor,s.kids,s.rest = scale*0.01,None,None,[],[]
-        s.size,s.res,s.lines,s.color,s.opacity = size,res,[],color,opacity
+        s.resw,s.size,s.res,s.lines,s.color,s.opacity = resw,size,res,[],color,opacity
         s.cursor_color,s.cursor_res = cursor_color,cursor_res
         s.on,s.ho = [0],[0,0]
         # start threads
@@ -362,7 +363,7 @@ class Container:
         px, py, pz = s.node.position
         zx, zy = s.size
         h32sc = 32 * s.sc
-        gsw_res_sc = GSW(s.res) * s.sc
+        gsw_res_sc = s.resw * s.sc
         xp = y * sc6
         yp = x * sc6
         nx_c, ny_c, nz = s.cpos()
@@ -573,7 +574,7 @@ class Button:
             p (tuple[float, float]): The new 2D offset (x, y) for the button.
         """
         p = tuple([_*s.sc for _ in p])
-        w = GSW(s.res)
+        w = s.resw
         zx,zy = s.size
         w = ((round(zx/w)*w)*s.sc)/2
         e = ((round(zy/32)*32)*s.sc)/2
