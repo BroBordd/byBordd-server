@@ -56,7 +56,8 @@ class Bubble:
         color: tuple = (1,1,1),
         time: float | int = 6,
         mode: int = 0,
-        res: list = [('#'),('\\/')]
+        res: list = [('█'),('▼')],
+        wid: float = 19.0
     ) -> None:
         if not 0 <= mode <= 5 : raise ValueError(f'mode can be an integer from 0 to 5, not {mode}')
         if not mode: mode = CH([1,2,3,4,5])
@@ -85,7 +86,7 @@ class Bubble:
         q.append(m)
         # the bubble
         c = list(s.color)
-        w = GSW(s.res[0])
+        w = wid[0]
         b = bs.newnode(
             'text',
             owner=m,
