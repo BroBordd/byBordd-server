@@ -9,7 +9,7 @@ For byBordd-server
 
 from babase import Plugin
 from bascenev1 import (
-    broadcastmessage as push,
+    screenmessage as push,
     chatmessage as say
 )
 
