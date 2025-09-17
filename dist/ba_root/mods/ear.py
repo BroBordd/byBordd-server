@@ -17,7 +17,7 @@ from _bascenev1 import (
 def ear(m,i):
     if m.startswith('.'):
         p = i2p(i)
-        push(f'{p}',clients=[i])
+        push(f'{p}',clients=[i],transient=True)
         return
     return m
 
