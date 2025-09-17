@@ -240,7 +240,7 @@ class Container:
         the container's defined size, then creates 'text' nodes for each line.
         It also re-calculates the cursor's offset.
         """
-        t,h = FIT(s.resw,s.size)
+        t,h = FIT(s.res,s.resw,s.size)
         [_.delete() for _ in s.lines if hasattr(_,'delete')]
         s.lines = [
             TEX(
@@ -517,7 +517,7 @@ class Button:
         adjusts the label's scale to fit within the button, then creates
         'text' nodes for each.
         """
-        t,h = FIT(s.resw,s.size)
+        t,h = FIT(s.res,s.resw,s.size)
         [_.delete() for _ in s.lines if hasattr(_,'delete')]
         pn = s.parent.node
         s.lines = [
@@ -693,7 +693,7 @@ class Text:
         bs.animate(s.line,'opacity',{0:p1,t:p2})
 
 GSW = lambda s: gsw(s,suppress_warning=True)
-FIT = lambda r,s: (r*(round(s[0]/r))+'\n',round(s[1]/32))
+FIT = lambda o,r,s: (o*(round(s[0]/r))+'\n',round(s[1]/32))
 MAT = lambda o,x,y: (
     bs.newnode(
         'math',
