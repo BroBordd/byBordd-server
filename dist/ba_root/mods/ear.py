@@ -23,11 +23,9 @@ def ear(m,i):
 
 def i2p(i):
     a = ga()
-    k = None
     for j,p in enumerate(a.players):
-        if j.sessionplayer.inputdevice.client_id == i:
-            k = j
-    return k if k is None else a.players[k]
+        if p.sessionplayer.inputdevice.client_id == i:
+            return a.players[j]
 
 # ba_meta require api 9
 # ba_meta export babase.Plugin
