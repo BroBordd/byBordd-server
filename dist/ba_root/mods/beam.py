@@ -728,7 +728,7 @@ TEX = lambda o,**k: (
     )
 )
 
-def demo():
+def demo(position=(-4,0.4,0)):
     """
     Demonstrates the usage of the Beam, Container, Button, and Text classes.
 
@@ -782,7 +782,7 @@ def demo():
     )
     beam = Beam(
         container=c,
-        position=(-4,0.4,0)
+        position=position
     )
 
 # brobord collide grass
