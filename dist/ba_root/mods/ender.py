@@ -185,25 +185,72 @@ class Ender(Bot):
 
         # Funny messages
         s.pursuit_messages = [
-            'Come here',
-            'You can\'t get too far',
-            'I\'m coming for ya',
-            'Got my eyes on you',
-            'Hello there, friendo'
+            'Target locked and pursuing',
+            'You can run, but you can\'t hide',
+            'Contract initiated',
+            'Time to collect',
+            'No escape from the shadows',
+            'Professional courtesy: you\'re dead',
+            'The hunt is on',
+            'Moving to intercept',
+            'Your time has come',
+            'Consider this a house call',
+            'Tracking device activated',
+            'Distance closing rapidly',
+            'You\'ve been marked',
+            'The reaper approaches',
+            'Nowhere to run now',
+            'My scope has found you',
+            'Target in sight, engaging',
+            'Death wears sunglasses',
+            'The shadows have eyes',
+            'Running only delays the inevitable'
         ]
+
         s.acquire_messages = [
-            'Gotcha, now become cake',
-            'Heheheh... got you',
-            'My turn',
-            'I\'ve got a present for you',
-            'Don\'t worry, this will only hurt a lot'
+            'Contract fulfilled',
+            'Nothing personal, just business',
+            'Target acquired and terminated',
+            'Clean execution',
+            'Job well done',
+            'Payment collected',
+            'Another satisfied client',
+            'Precision strike complete',
+            'Mission accomplished',
+            'Professional service delivered',
+            'Direct hit confirmed',
+            'Lights out, game over',
+            'Textbook elimination',
+            'The agency trained me well',
+            'One shot, one kill',
+            'Consider yourself retired',
+            'Welcome to the afterlife',
+            'Efficiency at its finest',
+            'Target down, objective complete',
+            'Another name crossed off the list'
         ]
+
         s.release_messages = [
-            'He\'s DEAD',
-            'WHO\'S NEXT',
-            'Oops, I dropped it',
-            'Target neutralized',
-            'That was fun'
+            'Target eliminated',
+            'Contract completed successfully',
+            'Clean kill, no witnesses',
+            'Another day at the office',
+            'Professional standards maintained',
+            'Mission status: success',
+            'Package delivered',
+            'Work is done here',
+            'Next contract, please',
+            'The agency will be pleased',
+            'File closed permanently',
+            'Invoice sent to client',
+            'Quality work, as always',
+            'Time to find the next mark',
+            'Job satisfaction: maximum',
+            'The shadows claim another',
+            'Case closed with extreme prejudice',
+            'Retirement plan activated',
+            'Service with a smile... and a scope',
+            'Professional courtesy extended'
         ]
 
         s.idle_messages = [
