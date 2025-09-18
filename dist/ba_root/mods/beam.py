@@ -456,9 +456,6 @@ class Container:
                 player.actor.connect_controls_to_player()
             s.captives.remove(player)
 
-        # If the last player just left, call the owner beam's back() method.
-        if not s.captives and s.owner_beam:
-            s.owner_beam.back()
     def add(s,w):
         """
         Adds a UI widget (Text or Button) to the container.
@@ -824,7 +821,7 @@ def demo(position=(-4,0.4,0)):
         label=cs(sc.BACK),
         color=(0.6,0.2,0.1),
         textcolor=(0.9,0.3,0.2),
-        call=lambda:beam.back()
+        call=beam.back
     )
     beam = Beam(
         container=c,
