@@ -821,7 +821,7 @@ def demo(position=(-4,0.4,0)):
         label=cs(sc.BACK),
         color=(0.6,0.2,0.1),
         textcolor=(0.9,0.3,0.2),
-        call=beam.back
+        call=lambda:beam.back()
     )
     beam = Beam(
         container=c,
