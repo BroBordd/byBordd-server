@@ -144,7 +144,7 @@ class Beam:
             s.bye = bs.Timer(1.5,bs.Call(setattr,s.tip,'opacity',0))
             s.next.capture(n)
 
-    def eye(s):
+    def _eye(s):
         """
         Continuously monitors for nearby players to display the introductory UI.
 
@@ -162,6 +162,32 @@ class Beam:
             elif d<2 and not s.up:
                 s.up = True
                 s.container.opacity = 1
+
+    # In the Beam class, replace the entire `eye` method with this:
+    def eye(s):
+        """
+        Monitors for nearby players to display the introductory UI.
+        This version checks all players before making a single decision to avoid flickering.
+        """
+        bs.timer(0.1, s.eye)
+        if s.active: return
+
+        # First, determine if ANY player is close enough.
+        a_player_is_close = False
+        for n in [_ for _ in bs.getnodes() if _.getnodetype() == 'spaz']:
+            if dist(n.position, s.node.position) < 2:
+                a_player_is_close = True
+                break # Found one, no need to check the rest
+
+        # Now, make a single decision based on the collective state.
+        if a_player_is_close and not s.up:
+            # A player is in range, and the UI is down, so bring it up.
+            s.up = True
+            s.container.opacity = 1
+        elif not a_player_is_close and s.up:
+            # No players are in range, and the UI is up, so bring it down.
+            s.up = False
+            s.container.opacity = 0
 
     def back(s):
         """
@@ -342,25 +368,6 @@ class Container:
             s.make()
         else: f(a,v)
 
-    def _capture(s,n):
-        """
-        Captures input from a specific player and assigns it to the container.
-
-        This prevents the player from controlling their character and instead
-        routes their input to the container for UI navigation.
-
-        Args:
-            n (babase.Node): The 'spaz' node of the player to capture.
-        """
-        s.me = n.source_player
-        s.me.actor.node.move_up_down = 0
-        s.me.actor.node.move_left_right = 0
-        s.me.resetinput()
-        for i,_ in enumerate(['UP_DOWN','LEFT_RIGHT']):
-            s.me.assigninput(getattr(IT,_),bs.Call(s.manage,i))
-        s.me.assigninput(IT.BOMB_PRESS,s.dump)
-        s.me.assigninput(IT.PUNCH_PRESS,s.push)
-        bs.animate(s.cursor,'opacity',{0:0,0.3:1})
     # In the Container class, replace the entire `capture` method with this:
     def capture(s, n):
         """
@@ -418,18 +425,6 @@ class Container:
             if b: o = _; break
         s.on[0] = o
 
-    def _dump(s):
-        """
-        Releases control of the player and deactivates the container.
-
-        This restores normal player controls and fades out the cursor.
-        """
-        s.me.resetinput()
-        s.me.actor.connect_controls_to_player()
-        bs.animate(s.cursor,'opacity',{0:1,0.3:0})
-        getattr(s.on[0],'hl',lambda b:0)(False)
-        s.on[0] = s.me = None
-        s.ho = [0,0]
     # In the Container class, replace the entire `dump` method with this:
     def dump(s):
         """
