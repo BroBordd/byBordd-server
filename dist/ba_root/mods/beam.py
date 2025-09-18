@@ -224,7 +224,7 @@ class Container:
     ):
         s.position = p = position
         s.node = TEX(None,text='')
-        s.sc,s.me,s.cursor,s.kids,s.rest = scale*0.01,None,None,[],[]
+        s.sc,s.cursor,s.kids,s.rest,s.caps = scale*0.01,None,[],[],[]
         s.resw,s.size,s.res,s.lines,s.color,s.opacity = resw,size,res,[],color,opacity
         s.cursor_color,s.cursor_res = cursor_color,cursor_res
         s.cursor_math = None
@@ -317,26 +317,6 @@ class Container:
         s.cursor_off = (UF((zx/6)*s.sc,(zx/2)*s.sc),UF((zy/6)*s.sc,(zy/2)*s.sc))
         s.node.position = s.position
 
-    def _point(s):
-        """
-        (Re)creates the interactive cursor within the container.
-
-        This method deletes any existing cursor and creates a new 'text' node
-        for the cursor, positioning it relative to the container.
-        """
-        getattr(s.cursor,'delete',lambda:0)()
-        s.cursor = TEX(
-            s.node,
-            color=s.cursor_color,
-            text=s.cursor_res,
-            opacity=[0,1][bool(s.me)],
-            v_align='bottom',
-            h_align='center'
-        )
-        m = MAT(s.cursor,*s.cursor_off)
-        s.node.connectattr('position',m,'input2')
-        m.connectattr('output',s.cursor,'position')
-
     def cpos(s):
         """
         Calculates the absolute 3D position of the cursor.
@@ -362,7 +342,7 @@ class Container:
             s.make()
         else: f(a,v)
 
-    def capture(s,n):
+    def _capture(s,n):
         """
         Captures input from a specific player and assigns it to the container.
 
@@ -381,7 +361,28 @@ class Container:
         s.me.assigninput(IT.BOMB_PRESS,s.dump)
         s.me.assigninput(IT.PUNCH_PRESS,s.push)
         bs.animate(s.cursor,'opacity',{0:0,0.3:1})
+    # In the Container class, replace the entire `capture` method with this:
+    def capture(s, n):
+        """
+        Captures input from a specific player and adds them to the list.
+        """
+        player = n.source_player
+        if player in s.caps: return # Don't capture the same player twice
 
+        s.caps.append(player)
+        player.actor.node.move_up_down = 0
+        player.actor.node.move_left_right = 0
+        player.resetinput()
+        for i, _ in enumerate(['UP_DOWN', 'LEFT_RIGHT']):
+            player.assigninput(getattr(IT, _), bs.Call(s.manage, i))
+
+        # The bomb press should call dump(), which now releases everyone
+        player.assigninput(IT.BOMB_PRESS, s.dump)
+        player.assigninput(IT.PUNCH_PRESS, s.push)
+
+        # Only animate the cursor if this is the first player
+        if len(s.caps) == 1:
+            bs.animate(s.cursor, 'opacity', {0: 0, 0.3: 1})
     def manage(s,i,v):
         """
         Manages directional input from the captured player.
@@ -394,35 +395,6 @@ class Container:
         """
         s.ho[i] = v
 
-    def _hover(s):
-        """
-        Continuously updates the cursor's position based on player input.
-
-        This method runs on a timer and moves the cursor within the container's
-        bounds according to the player's directional input.
-        """
-        bs.timer(0.01, s.hover)
-        if s.ho == [0,0] and s.position == s.node.position: return
-        x, y = s.ho
-        sc6 = s.sc * 6
-        px, py, pz = s.node.position
-        zx, zy = s.size
-        h32sc = 32 * s.sc
-        gsw_res_sc = s.resw * s.sc
-        xp = y * sc6
-        yp = x * sc6
-        nx_c, ny_c, nz = s.cpos()
-        nx = nx_c + xp
-        ny = ny_c + yp
-        if not (px < nx < (px + (zx * s.sc) - gsw_res_sc)):
-            nx = nx_c
-            xp = 0
-        if not (py + h32sc/2 < ny < (py + (zy * s.sc))):
-            ny = ny_c
-            yp = 0
-        if (nx, ny, nz) != s.cursor.position:
-            s.cursor_off = (s.cursor_off[0] + xp, s.cursor_off[1] + yp)
-            s.cursor.position = (nx, ny, nz)
 
     def watch(s):
         """
