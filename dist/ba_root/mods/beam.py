@@ -70,9 +70,9 @@ class Beam:
             attrs={
                 'position':position,
                 'body':'box',
-                'mesh':bs.getmesh('tnt'),
+                'mesh':bs.getmesh('powerup'),
                 'materials':[so.object_material,so.pickup_material],
-                'color_texture':bs.gettexture('rgbStripes'),
+                'color_texture':bs.gettexture('tv'),
                 'shadow_size':0.5,
                 'mesh_scale':0.7,
                 'body_scale':0.6
@@ -85,7 +85,7 @@ class Beam:
         s.next.iopacity = 0
         id = s.id = id or str(uuid4())[:4]
         title = title or cs(sc.OUYA_BUTTON_O)+f' Beam #{id}'
-        message = message or cs(sc.LEFT_BUTTON)+' Punch this to engage.'
+        message = message or cs(sc.LEFT_BUTTON)+' Punch this to engage'
         Text(
             parent=c,
             text=title,
