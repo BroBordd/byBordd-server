@@ -432,7 +432,6 @@ class Container:
         """
         Releases control for ALL captured players and deactivates the container.
         """
-        if not s.captives: return # Nothing to do if no one is captured
 
         for player in s.captives:
             if player and player.actor:
@@ -455,6 +454,8 @@ class Container:
                 player.resetinput()
                 player.actor.connect_controls_to_player()
             s.captives.remove(player)
+
+        if not s.captives: s.dump()
 
     def add(s,w):
         """
