@@ -252,7 +252,7 @@ class Container:
         s.position = p = position
         s.owner_beam = None
         s.node = TEX(None,text='')
-        s.sc,s.cursor,s.kids,s.rest,s.caps = scale*0.01,None,[],[],[]
+        s.sc,s.cursor,s.kids,s.rest,s.captives = scale*0.01,None,[],[],[]
         s.resw,s.size,s.res,s.lines,s.color,s.opacity = resw,size,res,[],color,opacity
         s.cursor_color,s.cursor_res = cursor_color,cursor_res
         s.cursor_math = None
@@ -271,7 +271,7 @@ class Container:
             s.node,
             color=s.cursor_color,
             text=s.cursor_res,
-            opacity=[0,1][bool(s.caps)],
+            opacity=[0,1][bool(s.captives)],
             v_align='bottom',
             h_align='center'
         )
@@ -284,7 +284,7 @@ class Container:
         Continuously updates the cursor's position based on player input.
         """
         bs.timer(0.01, s.hover)
-        if not s.caps: return # Simplified guard clause
+        if not s.captives: return # Simplified guard clause
         
         # No need to check for [0,0] if the player isn't active
         x, y = s.ho
@@ -376,9 +376,9 @@ class Container:
         Captures input from a specific player and adds them to the list.
         """
         player = n.source_player
-        if player in s.caps: return # Don't capture the same player twice
+        if player in s.captives: return # Don't capture the same player twice
 
-        s.caps.append(player)
+        s.captives.append(player)
         player.actor.node.move_up_down = 0
         player.actor.node.move_left_right = 0
         player.resetinput()
@@ -390,7 +390,7 @@ class Container:
         player.assigninput(IT.PUNCH_PRESS, s.push)
 
         # Only animate the cursor if this is the first player
-        if len(s.caps) == 1:
+        if len(s.captives) == 1:
             bs.animate(s.cursor, 'opacity', {0: 0, 0.3: 1})
     def manage(s,i,v):
         """
@@ -414,7 +414,7 @@ class Container:
         accordingly.
         """
         bs.timer(0.01,s.watch)
-        if not s.caps: return
+        if not s.captives: return
         x,y,z = s.cpos()
         o = None
         for _ in s.kids:
@@ -432,14 +432,14 @@ class Container:
         """
         Releases control for ALL captured players and deactivates the container.
         """
-        if not s.caps: return # Nothing to do if no one is captured
+        if not s.captives: return # Nothing to do if no one is captured
 
-        for player in s.caps:
+        for player in s.captives:
             if player and player.actor:
                 player.resetinput()
                 player.actor.connect_controls_to_player()
 
-        s.caps.clear() # Empty the list
+        s.captives.clear() # Empty the list
         bs.animate(s.cursor, 'opacity', {0: 1, 0.3: 0})
         getattr(s.on[0], 'hl', lambda b: 0)(False)
         s.on[0] = None
