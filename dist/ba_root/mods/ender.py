@@ -87,9 +87,10 @@ class Bubble:
     It consists of a background text block and a foreground text block
     to create a solid look.
     """
-    def __init__(s,head,res='\u2588'):
+    def __init__(s,head,res='\u2588',resw=19.0):
         s.head = head
         s.res = res
+        s.resw = resw
         s.text = ''
         s.kids = []
         s.bye = None
@@ -113,7 +114,7 @@ class Bubble:
         ls = len(text.splitlines())
         s.node.input1 = (0,1.3+0.32*ls,0)
         bg,t = s.kids
-        bg.text = (round(GSW(text)/GSW(s.res)+1)*s.res+'\n')*ls
+        bg.text = (round(GSW(text)/s.resw+1)*s.res+'\n')*ls
         t.text = text
         if not s.text: s.anim(0,1)
         s.text = text
