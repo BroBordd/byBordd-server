@@ -205,14 +205,39 @@ class Ender(Bot):
             'Target neutralized',
             'That was fun'
         ]
+
         s.idle_messages = [
-            'Is anyone out there',
-            'Boring...',
-            'Time to find a new friend',
-            'Where did everyone go',
-            'Hmm, I sense a disturbance in the force'
+            'Server feels empty...',
+            'Where did everyone go?',
+            'Waiting for targets to arrive',
+            'Ghost town out here',
+            'Even assassins get lonely',
+            'No contracts available',
+            'Silence... too much silence',
+            'The hunt begins when they return',
+            'Empty servers, empty clips',
+            'Sharpening skills in the shadows',
+            'This place needs more action',
+            'Even pros need someone to eliminate',
+            'Scanning... no life signs detected',
+            'The agency didn\'t mention this downtime',
+            'Population: zero. Boring.',
+            'Come out, come out, wherever you are',
+            'A killer without prey is just... waiting',
+            'Time to attract some fresh meat',
+            'Server population critically low',
+            'The darkness grows restless',
+            'Maintenance mode: activated',
+            'Solo missions are overrated',
+            'The void stares back',
+            'Recruiting new victims...',
+            'Echo... echo... echo...',
+            'My trigger finger is getting itchy',
+            'Quality over quantity, but still...',
+            'The calm before someone joins',
+            'Broadcasting on all frequencies',
+            'Time to update the kill count... oh wait'
         ]
-    
     def _say(s, message: str):
         """Handles speaking with a cooldown to prevent spam."""
         now = time()
