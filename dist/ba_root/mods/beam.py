@@ -81,6 +81,7 @@ class Beam:
         s.node.getdelegate(object).handlemessage = s.spy
         s.container = c = Container(size=(315,100),opacity=0)
         s.next = container
+        s.next.owner_beam = s
         s.next.iopacity = 0
         id = s.id = id or str(uuid4())[:4]
         title = title or cs(sc.OUYA_BUTTON_O)+f' Beam #{id}'
@@ -249,6 +250,7 @@ class Container:
         opacity = 1
     ):
         s.position = p = position
+        s.owner_beam = None
         s.node = TEX(None,text='')
         s.sc,s.cursor,s.kids,s.rest,s.caps = scale*0.01,None,[],[],[]
         s.resw,s.size,s.res,s.lines,s.color,s.opacity = resw,size,res,[],color,opacity
@@ -384,7 +386,7 @@ class Container:
             player.assigninput(getattr(IT, _), bs.Call(s.manage, i))
 
         # The bomb press should call dump(), which now releases everyone
-        player.assigninput(IT.BOMB_PRESS, s.dump)
+        player.assigninput(IT.BOMB_PRESS, bs.Call(s.release_one, player))
         player.assigninput(IT.PUNCH_PRESS, s.push)
 
         # Only animate the cursor if this is the first player
@@ -442,6 +444,21 @@ class Container:
         getattr(s.on[0], 'hl', lambda b: 0)(False)
         s.on[0] = None
         s.ho = [0, 0]
+    # In the Container class
+    def release_one(s, player):
+        """
+        Releases control for a single player who pressed the bomb button.
+        If this was the last captured player, it triggers the full UI shutdown.
+        """
+        if player in s.captives:
+            if player and player.actor:
+                player.resetinput()
+                player.actor.connect_controls_to_player()
+            s.captives.remove(player)
+
+        # If the last player just left, call the owner beam's back() method.
+        if not s.captives and s.owner_beam:
+            s.owner_beam.back()
     def add(s,w):
         """
         Adds a UI widget (Text or Button) to the container.
