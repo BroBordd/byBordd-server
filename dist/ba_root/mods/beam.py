@@ -243,7 +243,7 @@ class Container:
             s.node,
             color=s.cursor_color,
             text=s.cursor_res,
-            opacity=[0,1][bool(s.me)],
+            opacity=[0,1][bool(s.caps)],
             v_align='bottom',
             h_align='center'
         )
@@ -256,7 +256,7 @@ class Container:
         Continuously updates the cursor's position based on player input.
         """
         bs.timer(0.01, s.hover)
-        if not s.me: return # Simplified guard clause
+        if not s.caps: return # Simplified guard clause
         
         # No need to check for [0,0] if the player isn't active
         x, y = s.ho
@@ -405,7 +405,7 @@ class Container:
         accordingly.
         """
         bs.timer(0.01,s.watch)
-        if not s.me: return
+        if not s.caps: return
         x,y,z = s.cpos()
         o = None
         for _ in s.kids:
@@ -418,7 +418,7 @@ class Container:
             if b: o = _; break
         s.on[0] = o
 
-    def dump(s):
+    def _dump(s):
         """
         Releases control of the player and deactivates the container.
 
@@ -430,7 +430,23 @@ class Container:
         getattr(s.on[0],'hl',lambda b:0)(False)
         s.on[0] = s.me = None
         s.ho = [0,0]
+    # In the Container class, replace the entire `dump` method with this:
+    def dump(s):
+        """
+        Releases control for ALL captured players and deactivates the container.
+        """
+        if not s.caps: return # Nothing to do if no one is captured
 
+        for player in s.caps:
+            if player and player.actor:
+                player.resetinput()
+                player.actor.connect_controls_to_player()
+
+        s.caps.clear() # Empty the list
+        bs.animate(s.cursor, 'opacity', {0: 1, 0.3: 0})
+        getattr(s.on[0], 'hl', lambda b: 0)(False)
+        s.on[0] = None
+        s.ho = [0, 0]
     def add(s,w):
         """
         Adds a UI widget (Text or Button) to the container.
