@@ -145,26 +145,6 @@ class Beam:
             s.bye = bs.Timer(1.5,bs.Call(setattr,s.tip,'opacity',0))
             s.next.capture(n)
 
-    def _eye(s):
-        """
-        Continuously monitors for nearby players to display the introductory UI.
-
-        This method runs on a timer and checks the distance to all 'spaz' nodes
-        (players). If a player comes within a certain range, the introductory
-        UI for the Beam becomes visible.
-        """
-        bs.timer(0.1,s.eye)
-        if s.active: return
-        for n in [_ for _ in bs.getnodes() if _.getnodetype() == 'spaz']:
-            d = dist(n.position,s.node.position)
-            if d>2 and s.up:
-                s.up = False
-                s.container.opacity = 0
-            elif d<2 and not s.up:
-                s.up = True
-                s.container.opacity = 1
-
-    # In the Beam class, replace the entire `eye` method with this:
     def eye(s):
         """
         Monitors for nearby players to display the introductory UI.
@@ -260,7 +240,7 @@ class Container:
         # start threads
         [_() for _ in [s.make,s.point,s.hover,s.watch]]
         s.spy = 1
-    # In the Container class, replace the entire `point` method with this:
+
     def point(s):
         """
         (Re)creates the interactive cursor within the container.
@@ -278,7 +258,7 @@ class Container:
         s.cursor_math = MAT(s.cursor,*s.cursor_off) # Store the new math node
         s.node.connectattr('position',s.cursor_math,'input2')
         s.cursor_math.connectattr('output',s.cursor,'position')
-    # In the Container class, replace the entire `hover` method with this:
+
     def hover(s):
         """
         Continuously updates the cursor's position based on player input.
@@ -317,6 +297,7 @@ class Container:
             # THE FIX: Update the math node's input, not the cursor's position directly.
             if s.cursor_math:
                 s.cursor_math.input1 = (s.cursor_off[0], s.cursor_off[1], 0)
+
     def make(s):
         """
         Recreates the visual representation of the container's background.
