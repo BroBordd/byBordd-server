@@ -97,7 +97,7 @@ class Bubble:
         s.node = newnode(
             'math',
             delegate=s,
-            owner=head,
+#            owner=head,
             attrs={
                 'input1':(0,0,0),
                 'operation':'add'
