@@ -227,11 +227,68 @@ class Container:
         s.sc,s.me,s.cursor,s.kids,s.rest = scale*0.01,None,None,[],[]
         s.resw,s.size,s.res,s.lines,s.color,s.opacity = resw,size,res,[],color,opacity
         s.cursor_color,s.cursor_res = cursor_color,cursor_res
+        s.cursor_math = None
         s.on,s.ho = [0],[0,0]
         # start threads
         [_() for _ in [s.make,s.point,s.hover,s.watch]]
         s.spy = 1
+    # In the Container class, replace the entire `point` method with this:
+    def point(s):
+        """
+        (Re)creates the interactive cursor within the container.
+        """
+        getattr(s.cursor,'delete',lambda:0)()
+        getattr(s.cursor_math, 'delete', lambda:0)() # Also delete the old math node
+        s.cursor = TEX(
+            s.node,
+            color=s.cursor_color,
+            text=s.cursor_res,
+            opacity=[0,1][bool(s.me)],
+            v_align='bottom',
+            h_align='center'
+        )
+        s.cursor_math = MAT(s.cursor,*s.cursor_off) # Store the new math node
+        s.node.connectattr('position',s.cursor_math,'input2')
+        s.cursor_math.connectattr('output',s.cursor,'position')
+    # In the Container class, replace the entire `hover` method with this:
+    def hover(s):
+        """
+        Continuously updates the cursor's position based on player input.
+        """
+        bs.timer(0.01, s.hover)
+        if not s.me: return # Simplified guard clause
+        
+        # No need to check for [0,0] if the player isn't active
+        x, y = s.ho
+        sc6 = s.sc * 6
+        px, py, pz = s.node.position
+        zx, zy = s.size
+        h32sc = 32 * s.sc
+        gsw_res_sc = s.resw * s.sc
+        
+        xp = y * sc6
+        yp = x * sc6
+        
+        # Get the current logical cursor position to check boundaries
+        nx_c, ny_c, nz = s.cpos()
+        
+        nx = nx_c + xp
+        ny = ny_c + yp
+        
+        # Boundary checks (this logic is correct)
+        if not (px < nx < (px + (zx * s.sc) - gsw_res_sc)):
+            xp = 0
+        if not (py + h32sc/2 < ny < (py + (zy * s.sc))):
+            yp = 0
 
+        # If there's any valid movement, update the offset
+        if xp != 0 or yp != 0:
+            # Update the logical offset value
+            s.cursor_off = (s.cursor_off[0] + xp, s.cursor_off[1] + yp)
+
+            # THE FIX: Update the math node's input, not the cursor's position directly.
+            if s.cursor_math:
+                s.cursor_math.input1 = (s.cursor_off[0], s.cursor_off[1], 0)
     def make(s):
         """
         Recreates the visual representation of the container's background.
@@ -260,7 +317,7 @@ class Container:
         s.cursor_off = (UF((zx/6)*s.sc,(zx/2)*s.sc),UF((zy/6)*s.sc,(zy/2)*s.sc))
         s.node.position = s.position
 
-    def point(s):
+    def _point(s):
         """
         (Re)creates the interactive cursor within the container.
 
@@ -337,7 +394,7 @@ class Container:
         """
         s.ho[i] = v
 
-    def hover(s):
+    def _hover(s):
         """
         Continuously updates the cursor's position based on player input.
 
