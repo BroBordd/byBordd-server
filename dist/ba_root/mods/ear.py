@@ -32,7 +32,7 @@ def ear(m,i):
         try: px,py,pz = p.actor.node.position
         except: pass
         else:
-            run(lambda:demo(position=(px,py+1,pz)))
+            run(lambda:demo(position=(px-0.5,py+0.5,pz)))
             return
     if hasattr(p,'actor'):
         run(lambda:Bubble(
