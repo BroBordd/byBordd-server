@@ -97,7 +97,6 @@ class Bubble:
         s.node = newnode(
             'math',
             delegate=s,
-#            owner=head,
             attrs={
                 'input1':(0,0,0),
                 'operation':'add'
@@ -285,6 +284,30 @@ class Ender(Bot):
             'Broadcasting on all frequencies',
             'Time to update the kill count... oh wait'
         ]
+
+        s.held_messages = [
+            "You're holding the wrong guy",
+            "Grabbing me was a bad idea",
+            "You think holding me will help?",
+            "Wrong target to grab, pal",
+            "Hands off the professional",
+            "That grip won't save you",
+            "You're holding a loaded weapon",
+            "Bad move grabbing an agent",
+            "Your hold won't last long",
+            "Holding me just delays your death",
+            "Nice grip, shame you have to die",
+            "You're clutching at straws now",
+            "That grasp is about to slip",
+            "Holding me? How unprofessional",
+            "Your grip is weaker than your chances",
+            "You grabbed death itself",
+            "Restraining me won't restrain fate",
+            "That hold is temporary, your death isn't",
+            "Grabbing me just made this personal",
+            "You've got nerves touching the reaper"
+        ]
+
     def _say(s, message: str):
         """Handles speaking with a cooldown to prevent spam."""
         now = time()
@@ -296,7 +319,7 @@ class Ender(Bot):
         """Urgent message with its own cooldown, overriding normal speech."""
         now = time()
         if now - s.last_held_message_time > s.held_message_cooldown:
-            s.bub.push(choice(["You've got some nerve to hold me","Get your hands off me","Let go of me","Did you just hold me"]))
+            s.bub.push(choice(s.held_messages))
             s.last_held_message_time = now
 
     def _protective_think(s):
