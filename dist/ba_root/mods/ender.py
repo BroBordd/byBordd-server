@@ -331,25 +331,30 @@ class Ender(Bot):
             return
 
         target = s._get_target()
-        now = time()
-        
-        # Check if we are being held. If so, try to break free and say the urgent message.
-        if target and target.hold_node == s.node and now - s.last_skill_time > 0.4:
-            s._say_held()
-            s.skill2()
-            s.last_skill_time = now
-            return
+        if isinstance(target,tuple):
+            # powerup
+            ty,target = target
+        else:
+            # player
+            now = time()
 
-        # Only activate if a target exists and we are running (chasing)
-        if target and s.node.run and now - s.last_skill_time > 0.4:
-            my_pos = s.node.position
-            target_pos = target.position
-            distance = dist(my_pos, target_pos)
-
-            # If the target is within a close range, use skill2 (punch + grab)
-            if distance < 1.6:
+            # Check if we are being held. If so, try to break free and say the urgent message.
+            if target and target.hold_node == s.node and now - s.last_skill_time > 0.4:
+                s._say_held()
                 s.skill2()
                 s.last_skill_time = now
+                return
+
+            # Only activate if a target exists and we are running (chasing)
+            if target and s.node.run and now - s.last_skill_time > 0.4:
+                my_pos = s.node.position
+                target_pos = target.position
+                distance = dist(my_pos, target_pos)
+
+                # If the target is within a close range, use skill2 (punch + grab)
+                if distance < 1.6:
+                    s.skill2()
+                    s.last_skill_time = now
         
     def _start_combos(s):
         """Starts the skill1 and shake combos on a regular timer."""
@@ -379,20 +384,39 @@ class Ender(Bot):
         if not s.node.exists(): return None
         my_pos = s.node.position
 
-        player_nodes = [
-            n for n in GN() if n.exists() and n.getnodetype() == 'spaz' and n.hurt < 1.0
-        ]
-        potential_targets = [p for p in player_nodes if p is not s.node]
+        pup_nodes = []
+        player_nodes = []
+        for n in GN():
+            try:
+                if n.exists() and n.getnodetype() == 'spaz' and n.hurt < 1.0 and n is not s.node:
+                    player_nodes.append(n)
+                    continue
+                ty = getattr(n.getdelegate(object),'poweruptype',0)
+                match ty:
+                    case 'health':
+                        if s.node.hurt < 0.3: continue
+                        pup_nodes.append((ty,n))
+                    case 'punch':
+                        if s.node.getdelegate(object)._has_boxing_gloves: continue
+                        pup_nodes.append((ty,n))
+                    case 'shield':
+                        if (s.node.getdelegate(object).shield_hitpoints or 0) > 200: continue
+                        pup_nodes.append((ty,n))
+            except:
+                from traceback import print_exc
+                print_exc()
 
-        if not potential_targets:
-            return None
+        if pup_nodes:
+            return min(
+                pup_nodes,
+                key=lambda _: dist(my_pos, _[1].position)
+            )
+        if player_nodes:
+            return min(
+                player_nodes,
+                key=lambda n: dist(my_pos, n.position)
+            )
 
-        # Find the closest valid target
-        return min(
-            potential_targets,
-            key=lambda n: dist(my_pos, n.position)
-        )
-    
     def _shake(s):
         """Handles the rapid left/right shaking movement."""
         s.is_shaking = not s.is_shaking
@@ -411,35 +435,39 @@ class Ender(Bot):
             s._stop_combos()
             return
 
-        target = s._get_target()
         now = time()
-        
-        # Check for holding an incorrect or dead target
-        if s.node.hold_node and (s.node.hold_node != target or (target and target.hurt == 1.0)):
-            s._stop_combos()
-            
-            # Say a funny line and throw the held item
-            if s.node.hold_node and s.node.hold_node != target and target:
-                s._say(f"Wait... this isn't {str(target.name)}")
-            elif target and target.hurt == 1.0:
-                s._say(choice(s.release_messages))
-            
-            s.on(2) # Release pickup
-            s.move(0, 0) # Stop moving for a moment
-            s._has_announced_target = False # Reset the flag
-            return
+        target = s._get_target()
+        print(target)
+        if isinstance(target,tuple):
+            ty,target = target
+        else:
+            # Player
 
-        # Shaking logic for when the *correct* player is held and they are still alive
-        if s.node.hold_node == target:
-            s.on_run(0) # Stop moving forward
-            
-            # Start combos if not already running
-            if not s._skill1_timer:
-                s._start_combos()
-            return
-        
-        # If we get here, we are not holding the target, so stop any combos
-        s._stop_combos()
+            # Check for holding an incorrect or dead target
+            if s.node.hold_node and (s.node.hold_node != target or (target and target.hurt == 1.0)):
+                s._stop_combos()
+
+                if s.node.hold_node and s.node.hold_node != target and target:
+                    s._say(f"Wait... this isn't {str(target.name)}")
+                elif target and target.hurt == 1.0:
+                    s._say(choice(s.release_messages))
+
+                s.on(2) # Release pickup
+                s.move(0, 0) # Stop moving for a moment
+                s._has_announced_target = False # Reset the flag
+                return
+
+            # Shaking logic for when the *correct* player is held and they are still alive
+            if s.node.hold_node == target:
+                s.on_run(0) # Stop moving forward
+
+                # Start combos if not already running
+                if not s._skill1_timer:
+                    s._start_combos()
+                return
+
+            # If we get here, we are not holding the target, so stop any combos
+            s._stop_combos()
 
         if target and target.exists():
             # If we just found a new target, announce it.
